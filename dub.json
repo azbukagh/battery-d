@@ -1,0 +1,9 @@
+{
+	"name": "battery-d",
+	"authors": [
+		"Azbuka"
+	],
+	"description": "Simple way to get battery info",
+	"copyright": "Copyright © 2017, gentleman",
+	"license": "MIT"
+}

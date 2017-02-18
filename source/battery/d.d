@@ -92,18 +92,30 @@ class Battery(bool UpdateOnRead = false) {
 	}
 
 	float level() {
+		static if(UpdateOnRead) {
+			this.update;
+		}
 		return this.lvl;
 	}
 
 	Duration timeUntilFull() {
+		static if(UpdateOnRead) {
+			this.update;
+		}
 		return this.untilfull;
 	}
 
 	Duration timeUntilEmpty() {
+		static if(UpdateOnRead) {
+			this.update;
+		}
 		return this.untilempty;
 	}
 
 	BatteryStatus status() {
+		static if(UpdateOnRead) {
+			this.update;
+		}
 		return this.stat;
 	}
 }

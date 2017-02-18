@@ -17,7 +17,7 @@ auto getBatteryList() {
 		.filter!(a => a.startsWith("BAT"));
 }
 
-class Battery(bool UpdateOnRead = false) {
+class Battery {
 	private {
 		string bname;
 		string[string] rawdata;
@@ -39,7 +39,7 @@ class Battery(bool UpdateOnRead = false) {
 	void update() {
 		import std.stdio : File;
 		import std.array : split, replaceFirst;
-		import std.conv : to, parse;
+		import std.conv : to;
 		import core.exception : RangeError;
 
 		auto f = File("/sys/class/power_supply/" ~ this.bname ~ "/uevent");
@@ -52,13 +52,13 @@ class Battery(bool UpdateOnRead = false) {
 
 		size_t rate, full, curr;
 		try {
-			rate = this.rawdata["CURRENT_NOW"].parse!size_t;
-			full = this.rawdata["CHARGE_FULL"].parse!size_t;
-			curr = this.rawdata["CHARGE_NOW"].parse!size_t;
+			rate = this.rawdata["CURRENT_NOW"].to!size_t;
+			full = this.rawdata["CHARGE_FULL"].to!size_t;
+			curr = this.rawdata["CHARGE_NOW"].to!size_t;
 		} catch (RangeError e) {
-			rate = this.rawdata["POWER_NOW"].parse!size_t;
-			full = this.rawdata["ENERGY_FULL"].parse!size_t;
-			curr = this.rawdata["ENERGY_NOW"].parse!size_t;
+			rate = this.rawdata["POWER_NOW"].to!size_t;
+			full = this.rawdata["ENERGY_FULL"].to!size_t;
+			curr = this.rawdata["ENERGY_NOW"].to!size_t;
 		}
 
 		this.lvl = (float(curr) / full) * 100;
@@ -94,37 +94,26 @@ class Battery(bool UpdateOnRead = false) {
 	}
 
 	float level() {
-		static if(UpdateOnRead) {
-			this.update;
-		}
 		return this.lvl;
 	}
 
 	Duration timeUntilFull() {
-		static if(UpdateOnRead) {
-			this.update;
-		}
 		return this.untilfull;
 	}
 
 	Duration timeUntilEmpty() {
-		static if(UpdateOnRead) {
-			this.update;
-		}
 		return this.untilempty;
 	}
 
 	BatteryStatus status() {
-		static if(UpdateOnRead) {
-			this.update;
-		}
 		return this.stat;
 	}
 
 	string[string] raw() {
-		static if(UpdateOnRead) {
-			this.update;
-		}
 		return this.rawdata;
+	}
+
+	string name() {
+		return this.bname;
 	}
 }

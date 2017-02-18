@@ -3,14 +3,20 @@ module battery.d;
 import std.experimental.logger;
 import core.time : Duration, dur;
 
+enum BatteryStatus : ubyte {
+	DISCHARGING,
+	CHARGING,
+	FULL
+}
 
 class Battery(bool UpdateOnRead = false) {
 	private {
 		string bname;
 		string[string] rawdata;
-		float level;
+		float lvl;
 		Duration untilfull;
 		Duration untilempty;
+		BatteryStatus stat;
 	}
 
 	this(string battery_name) {
@@ -29,12 +35,11 @@ class Battery(bool UpdateOnRead = false) {
 	}
 
 	void update() {
-		import std.stdio;
-		import std.algorithm;
-		import std.array;
-		import std.range;
-		import std.conv;
+		import std.stdio : File;
+		import std.array : split, replaceFirst;
+		import std.conv : to, parse;
 		import core.exception : RangeError;
+
 		auto f = File("/sys/class/power_supply/" ~ this.bname ~ "/uevent");
 		foreach(line; f.byLine) {
 			auto s = line.split("=");
@@ -42,6 +47,7 @@ class Battery(bool UpdateOnRead = false) {
 				     .replaceFirst("POWER_SUPPLY_", "")
 				     .to!string] = s[1].to!string;
 		}
+
 		size_t rate, full, curr;
 		try {
 			rate = this.rawdata["CURRENT_NOW"].parse!size_t;
@@ -53,7 +59,7 @@ class Battery(bool UpdateOnRead = false) {
 			curr = this.rawdata["ENERGY_NOW"].parse!size_t;
 		}
 
-		this.level = float(curr) / full;
+		this.lvl = (float(curr) / full) * 100;
 
 		if(rate) {
 			switch(this.rawdata["STATUS"]) {
@@ -62,13 +68,18 @@ class Battery(bool UpdateOnRead = false) {
 					.to!long
 					.dur!"seconds";
 				this.untilfull = Duration.zero;
+				this.stat = BatteryStatus.DISCHARGING;
 				break;
 			case "Charging":
 				this.untilempty = Duration.zero;
 				this.untilfull = ((float(full - curr) / rate) * 3600)
 					.to!long
 					.dur!"seconds";
+				this.stat = BatteryStatus.CHARGING;
 				break;
+			case "Full":
+				this.stat = BatteryStatus.FULL;
+				goto default;
 			default:
 				this.untilempty = Duration.zero;
 				this.untilfull = Duration.zero;
@@ -80,8 +91,8 @@ class Battery(bool UpdateOnRead = false) {
 		}
 	}
 
-	float Level() {
-		return this.level;
+	float level() {
+		return this.lvl;
 	}
 
 	Duration timeUntilFull() {
@@ -90,5 +101,9 @@ class Battery(bool UpdateOnRead = false) {
 
 	Duration timeUntilEmpty() {
 		return this.untilempty;
+	}
+
+	BatteryStatus status() {
+		return this.stat;
 	}
 }

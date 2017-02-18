@@ -17,17 +17,30 @@ auto getBatteryList() {
 		.filter!(a => a.startsWith("BAT"));
 }
 
+
+class BatteryException : Exception {
+	pure nothrow @nogc @safe this(string msg,
+		string file = __FILE__,
+		size_t line = __LINE__,
+		Throwable next = null) {
+			super(msg, file, line, next);
+	}
+}
+
 class Battery {
 	private {
 		string bname;
 		string[string] rawdata;
 		float lvl;
 		Duration untilfull;
-		Duration untilempty;
+		Duration remaining;
 		BatteryStatus stat;
 	}
 
 	this(string battery_name) {
+		import std.file : exists;
+		if(!("/sys/class/power_supply/" ~ battery_name).exists)
+			throw new BatteryException("There is no such battery");
 		this.bname = battery_name;
 		this.update;
 	}
@@ -66,14 +79,14 @@ class Battery {
 		if(rate) {
 			switch(this.rawdata["STATUS"]) {
 			case "Discharging":
-				this.untilempty = ((float(curr) / rate) * 3600)
+				this.remaining = ((float(curr) / rate) * 3600)
 					.to!long
 					.dur!"seconds";
 				this.untilfull = Duration.zero;
 				this.stat = BatteryStatus.DISCHARGING;
 				break;
 			case "Charging":
-				this.untilempty = Duration.zero;
+				this.remaining = Duration.zero;
 				this.untilfull = ((float(full - curr) / rate) * 3600)
 					.to!long
 					.dur!"seconds";
@@ -83,12 +96,12 @@ class Battery {
 				this.stat = BatteryStatus.FULL;
 				goto default;
 			default:
-				this.untilempty = Duration.zero;
+				this.remaining = Duration.zero;
 				this.untilfull = Duration.zero;
 				break;
 			}
 		} else {
-			this.untilempty = Duration.zero;
+			this.remaining = Duration.zero;
 			this.untilfull = Duration.zero;
 		}
 	}
@@ -101,8 +114,8 @@ class Battery {
 		return this.untilfull;
 	}
 
-	Duration timeUntilEmpty() {
-		return this.untilempty;
+	Duration timeRemaining() {
+		return this.remaining;
 	}
 
 	BatteryStatus status() {

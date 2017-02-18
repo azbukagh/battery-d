@@ -118,4 +118,11 @@ class Battery(bool UpdateOnRead = false) {
 		}
 		return this.stat;
 	}
+
+	string[string] raw() {
+		static if(UpdateOnRead) {
+			this.update;
+		}
+		return this.rawdata;
+	}
 }

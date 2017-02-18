@@ -1,7 +1,8 @@
 import std.stdio;
 import battery.d;
+import std.getopt;
 
-void main() {
+int main(string[] args) {
 	auto b = new Battery!()();
 	switch(b.status) with(BatteryStatus) {
 		case DISCHARGING:
@@ -20,4 +21,6 @@ void main() {
 			break;
 		default: break;
 	}
+
+	return 0;
 }

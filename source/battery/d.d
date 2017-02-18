@@ -1,12 +1,20 @@
 module battery.d;
 
-import std.experimental.logger;
 import core.time : Duration, dur;
 
 enum BatteryStatus : ubyte {
 	DISCHARGING,
 	CHARGING,
 	FULL
+}
+
+auto getBatteryList() {
+	import std.file : dirEntries, SpanMode;
+	import std.algorithm : map, filter, startsWith;
+	import std.path : baseName;
+	return "/sys/class/power_supply".dirEntries(SpanMode.shallow)
+		.map!(a => a.name.baseName)
+		.filter!(a => a.startsWith("BAT"));
 }
 
 class Battery(bool UpdateOnRead = false) {
@@ -25,13 +33,7 @@ class Battery(bool UpdateOnRead = false) {
 	}
 
 	this() {
-		import std.file : dirEntries, SpanMode;
-		import std.algorithm : filter, startsWith;
-		import std.path : baseName;
-		this("/sys/class/power_supply".dirEntries(SpanMode.shallow)
-			.filter!(a => a.name.baseName.startsWith("BAT"))
-			.front
-			.baseName);
+		this(getBatteryList.front);
 	}
 
 	void update() {

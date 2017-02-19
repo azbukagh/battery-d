@@ -21,6 +21,7 @@ void main() {
 	writeln("Level: ", b.level);
 	writeln("Status: ", b.status);
 }
+```
 
 ## Advanced usage
 battery-d have been developed as rewrite of old perl script, which parses output of `acpi` command.

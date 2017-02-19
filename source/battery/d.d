@@ -1,13 +1,36 @@
+/**
+ * battery-d - simple library for reading battery info on linux laptops.
+ * License: MIT
+ * Copyright: Copyright © 2017, Azbuka
+ * Authors: Azbuka
+ */
 module battery.d;
 
 import core.time : Duration, dur;
 
+/**
+ * Current battery status
+ */
 enum BatteryStatus : ubyte {
+	/// Discharging
 	DISCHARGING,
+	/// Charging
 	CHARGING,
+	/// Full (100%)
 	FULL
 }
 
+/**
+ * Gets list of all aviable batteries in system
+ * Example:
+ * ---
+ * import std.array;
+ * import battery.d;
+ * getBatteryList().array; // ["BAT0"], laptops in general have only 1 battery
+ * getBatteryList().front; // "BAT1"
+ * ---
+ * Returns: range of battery names
+ */
 auto getBatteryList() {
 	import std.file : dirEntries, SpanMode;
 	import std.algorithm : map, filter, startsWith;
@@ -17,7 +40,9 @@ auto getBatteryList() {
 		.filter!(a => a.startsWith("BAT"));
 }
 
-
+/**
+ * Battery exception. Thrown on errors.
+ */
 class BatteryException : Exception {
 	pure nothrow @nogc @safe this(string msg,
 		string file = __FILE__,
@@ -27,6 +52,9 @@ class BatteryException : Exception {
 	}
 }
 
+/**
+ * Main battery class
+ */
 class Battery {
 	private {
 		string bname;
@@ -37,6 +65,12 @@ class Battery {
 		BatteryStatus stat;
 	}
 
+	/**
+	 * Constructor.
+	 * Params:
+	 *  battery_name = name of battery (example: BAT0)
+	 * Throws: BatteryException if there is no such battery
+	 */
 	this(string battery_name) {
 		import std.file : exists;
 		if(!("/sys/class/power_supply/" ~ battery_name).exists)
@@ -45,10 +79,20 @@ class Battery {
 		this.update;
 	}
 
+	/**
+	 * Cunstructor. Uses first battery, returned by `getBatteryList()`
+	 * Throws: battery exception, if no batteries found
+	 */
 	this() {
-		this(getBatteryList.front);
+		auto a = getBatteryList;
+		if(a.empty)
+			throw new BatteryException("Battery not found");
+		this(a.front);
 	}
 
+	/**
+	 * Updates battery info
+	 */
 	void update() {
 		import std.stdio : File;
 		import std.array : split, replaceFirst;
@@ -106,26 +150,52 @@ class Battery {
 		}
 	}
 
+	/**
+	 * Current battery level. 0-100%
+	 * Returns: current battery level in %
+	 */
 	float level() {
 		return this.lvl;
 	}
 
+	/**
+	 * Time until battery is full.
+	 * `Duration.zero` if battery full or discharging.
+	 * Returns: time until battery is full
+	 */
 	Duration timeUntilFull() {
 		return this.untilfull;
 	}
 
+	/**
+	 * Time remaining.
+	 * `Duration.zero` if battery full or charging.
+	 * Returns: time remaining
+	 */
 	Duration timeRemaining() {
 		return this.remaining;
 	}
 
+	/**
+	 * Current battery status.
+	 * Returns: battery status
+	 */
 	BatteryStatus status() {
 		return this.stat;
 	}
 
+	/**
+	 * Raw battery data.
+	 * Returns: raw battery data
+	 */
 	string[string] raw() {
 		return this.rawdata;
 	}
 
+	/**
+	 * Battery name.
+	 * Returns: battery name
+	 */
 	string name() {
 		return this.bname;
 	}

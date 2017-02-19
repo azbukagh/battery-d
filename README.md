@@ -18,9 +18,14 @@ By default `battery-d -pc` outputs coloured battery level:
 - <= 20% - red
 - <= 50% - yellow
 - <= 100% - green
+
 Output can be customized by editing code or cli arguments:
-`battery-d -pc --threshold=30=["%F{orange}","%%%f"]`
+```
+battery-d -pc --threshold=30=["%F{orange}","%%%f"]
+```
 This command adds new threshold, which prepends battery level with `%F{orange}` and appends `%%%f`.
 Output will look like this:
-`%F{orange}29%%%f`
+````
+%F{orange}29%%%f
+```
 In zsh it produces orange-coloured `29%`.

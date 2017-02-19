@@ -10,7 +10,6 @@ dependencies:
     - curl -fsSL --retry 3 "http://code.dlang.org/files/dub-$DUB-linux-x86_64.tar.gz" | tar -C ~ -zxf -
     - dmd --version
     - dub --version
-    - git clone https://github.com/azbukagh/battery-d
 test:
   override:
     - dub build -b debug

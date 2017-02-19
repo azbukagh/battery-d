@@ -1,4 +1,4 @@
-battery-d [![Page on DUB](https://img.shields.io/dub/v/battery-d.svg)](http://code.dlang.org/packages/battery-d) [![License](https://img.shields.io/dub/l/battery-d.svg)](https://github.com/azbukagh/battery-d/blob/master/LICENSE.md)
+battery-d [![Page on DUB](https://img.shields.io/dub/v/battery-d.svg)](http://code.dlang.org/packages/battery-d) [![License](https://img.shields.io/dub/l/battery-d.svg)](https://github.com/azbukagh/battery-d/blob/master/LICENSE.md) [![CircleCI](https://circleci.com/gh/azbukagh/battery-d.svg?style=svg)](https://circleci.com/gh/azbukagh/battery-d)
 =============
 battery-d - simple library for reading battery info on linux laptops.
 Provides access to battery status (discharging, charging or full), battery level (0-100%), time remaining and time until full.
@@ -11,6 +11,16 @@ dub run battery-d
 
 ## As library
 battery-d can be used as library. Just add it to dependencies in `dub.json`.
+Example usage:
+```
+import std.stdio;
+import battery.d;
+
+void main() {
+	auto b = new Battery();
+	writeln("Level: ", b.level);
+	writeln("Status: ", b.status);
+}
 
 ## Advanced usage
 battery-d have been developed as rewrite of old perl script, which parses output of `acpi` command.

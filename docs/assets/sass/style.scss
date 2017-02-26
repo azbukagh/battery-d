@@ -1,2 +1,10 @@
-@import "bootstrap"
+@import "bootstrap";
 
+.key {
+    font-weight: bold;
+    display: block;
+}
+
+.value {
+    display: block;
+}

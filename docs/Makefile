@@ -17,23 +17,38 @@ STYLES	:= $(patsubst $(SASSDIR)/%.scss, $(BUILDCSSDIR)/%.css, $(SASSSRC))
 SRCDIR	:= ../source
 
 
-P2MODULES	= $(foreach P,$1, $(addprefix $P/,$(PACKAGE_$(subst /,_,$P))))
-D2HTML	= $(foreach p,$1,$(if $(subst package.d,,$(notdir $p)),$(subst /,_,$(subst .d,.html,$p)),$(subst /,_,$(subst /package.d,.html,$p))))
-
-
 PACKAGES	:= battery
 PACKAGE_battery	:= d
+
+
+################################################################################
+# Functions
+################################################################################
+
+# Returns all modules in package
+# Example:
+#	PACKAGES = mypackage
+#	PACKAGE_mypackage = yay boi
+#	$(call P2MODULES,$(PACKAGES)) # mypackage/yay mypackage/boi
+P2MODULES	= $(foreach P,$1, $(addprefix $P/,$(PACKAGE_$(subst /,_,$P))))
+# Module to html file name
+# Example:
+#	mypackage/yay -> mypackage_yay.html
+#	
+D2HTML	= $(foreach p,$1,$(if $(subst package.d,,$(notdir $p)),$(subst /,_,$(subst .d,.html,$p)),$(subst /,_,$(subst /package.d,.html,$p))))
 
 MODULES	= $(call P2MODULES,$(PACKAGES))
 HTMLS	= $(addprefix $(BUILDDIR)/,$(call D2HTML,$(addsuffix .d,$(MODULES))))
 
 define MAKEMODULE
 $(BUILDDIR)/$(call D2HTML,$(addsuffix .d,$1))	:\
-$(addprefix $(SRCDIR)/,$(addsuffix .d,$1)) $(BUILDDIR)
+$(addprefix $(SRCDIR)/,$(addsuffix .d,$1)) $(BUILDDIR) $(TMPLSRC)
 	@echo "Module $1 documentation:"
 	@echo "	$$< -> $$@"
 	@$(DDOC) $(TMPLSRC) -I$(SRCDIR) -Df$$@ $$<
 endef
+
+all	: css html
 
 $(foreach k,$(MODULES),$(eval $(call MAKEMODULE,$(k))))
 
@@ -54,8 +69,4 @@ clean	:
 	rm -rf $(BUILDDIR)
 
 css	: $(STYLES)
-
 html	: $(HTMLS)
-
-all	: css html
-

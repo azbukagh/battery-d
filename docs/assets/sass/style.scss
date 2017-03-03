@@ -1,10 +1,31 @@
 @import "bootstrap";
 
 .key {
-    font-weight: bold;
-    display: block;
+	font-weight: bold;
+	display: block;
 }
 
 .value {
-    display: block;
+	display: block;
+}
+
+.declDesc {
+	padding-left: 1em;
+}
+
+.decl + dd,
+.decl > div {
+	border: 1px solid #E6E6E6;
+}
+
+.decl {
+	border-left: 5px solid $brand-primary;
+	border-top-left-radius: 4px;
+	background: $gray-lighter;
+}
+
+.decl > div {
+	border-top-right-radius: 4px;
+	border-bottom: none;
+	padding: 1em;
 }

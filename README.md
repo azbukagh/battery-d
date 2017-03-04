@@ -23,6 +23,8 @@ void main() {
 }
 ```
 
+## [Documentation](https://azbukagh.github.io/battery-d/)
+
 ## Advanced usage
 battery-d have been developed as rewrite of old perl script, which parses output of `acpi` command.
 By default `battery-d -pc` outputs coloured battery level:

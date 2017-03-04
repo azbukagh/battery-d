@@ -69,7 +69,7 @@ $(GENERATEDTMPL)	: FORCE $(GENERATEDDIR)
 	@echo "_=Do not edit! Auto-generated file" >> $@
 	@echo "LATEST=$(LATEST)" >> $@
 
-.PHONY	: clean css html
+.PHONY	: clean css html tar
 clean	:
 	rm -rf $(BUILDDIR)
 	rm -rf $(GENERATEDDIR)
@@ -77,3 +77,9 @@ clean	:
 css	: $(STYLES)
 html	: $(HTMLS)
 FORCE	:
+tar	: $(GENERATEDDIR)/$(LATEST)_$(shell date +%Y-%m-%d).tgz all
+
+$(GENERATEDDIR)/$(LATEST)_$(shell date +%Y-%m-%d).tgz	: all
+	@echo "Compressing documentation to $@"
+	@tar -czf $@ $(BUILDDIR)
+

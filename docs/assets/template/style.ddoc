@@ -3,13 +3,12 @@ DDOC	=
 <html lang="en-US">
 	<head>
 		<meta charset="utf-8">
-		
 		<link rel="stylesheet" type="text/css" href="css/style.css">
-		$(T title, $(TITLE))
+		$(T title, $(TITLE) v$(LATEST))
 	</head>
 	<body>
 		<div class="container">
-			$(DIVC title, $(H1 $(TITLE)))
+			$(DIVC title, $(H1 $(TITLE) $(T small, v$(LATEST))))
 			$(BODY)
 		</div>
 	</body>
@@ -17,6 +16,15 @@ DDOC	=
 _=
 
 KEYVALUE	= $(DIVC keyval $1, $(SPANC key key$1, $2) $(DIVC val val$1, $3))
+
+D_CODE	= $(DIVC d_code, $(T pre, $0))
+D_INLINECODE = <code class="code">$0</code>
+DDOC_BACKQUOTED = $(D_INLINECODE $0)
+D_COMMENT = <span class="comment">$0</span>
+D_STRING = <span class="string_literal">$0</span>
+D_KEYWORD = <span class="keyword">$0</span>
+D_PSYMBOL = <span class="psymbol">$0</span>
+D_PARAM = <span class="param">$0</span>
 
 _=DDoc-related stuff
 DDOC_COMMENT	= <!--$0-->
@@ -49,6 +57,7 @@ DDOC_MEMBERS	= $(TC dl, members, $0)
 DDOC_DECL	= $(T DIV, $0)
 DDOC_DECL_DD	= $(TC dd, declDesc, $0)
 DDOC_MEMBER_HEADER	= $0
+DDOC_HEADER_ANCHOR	= <a href="#$1" class="anchor">#</a>
 
 DDOC_PARAMS	= $(KEYVALUE Params, Parameters:, $0)
 DDOC_PARAM_ROW	= $(TR $0)
@@ -57,9 +66,9 @@ DDOC_PARAM_DESC	= $(TD $0)
 _=
 
 DDOC_ANCHOR	= $(ADEF $1)
-DDOC_PSYMBOL	= $(U $0)
+DDOC_PSYMBOL	= $(T strong, $0)
 DDOC_KEYWORD	= $(B $0)
-DDOC_PARAM	= $(I $0)
+DDOC_PARAM	= $(T em, $0)
 DDOC_OVERLOAD_SEPARATOR	= $(BR)
 DDOC_CONSTRAINT	=$(BR)$(SPAN class="constraint", if ($0))
 DDOC_TEMPLATE_PARAM_LIST	=$(SPAN class="template_param_list" title="Template parameter list", $0)

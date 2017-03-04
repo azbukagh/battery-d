@@ -9,8 +9,16 @@
 	display: block;
 }
 
-.declDesc {
-	padding-left: 1em;
+dd {
+	padding: 0.5em;
+	padding-left: 2em;
+	margin: 0;
+	margin-bottom: 2em;
+}
+
+dl {
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
 .decl + dd,
@@ -18,14 +26,56 @@
 	border: 1px solid #E6E6E6;
 }
 
-.decl {
+dt.decl {
 	border-left: 5px solid $brand-primary;
 	border-top-left-radius: 4px;
 	background: $gray-lighter;
+	font-weight: normal;
 }
 
 .decl > div {
 	border-top-right-radius: 4px;
 	border-bottom: none;
 	padding: 1em;
+}
+
+.decl:hover a.anchor {
+	visibility: visible;
+}
+
+a.anchor {
+	float: right;
+	margin-top: 0.2em;
+	margin-right: 0.2em;
+	visibility: hidden;
+}
+
+.summary {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+div.keyval {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+span.comment {
+	color: $gray-light;
+}
+
+span.string_literal {
+	color: #DC4040;
+}
+
+span.keyword {
+	color: #4040DC;
+}
+
+span.psymbol {
+	font-weight: bold;
+}
+
+span.param {
+	font-style: italic;
 }

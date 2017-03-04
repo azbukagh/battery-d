@@ -22,7 +22,7 @@ enum BatteryStatus : ubyte {
 
 /**
  * Gets list of all aviable batteries in system
- * Example:
+ * Examples:
  * ---
  * import std.array;
  * import battery.d;

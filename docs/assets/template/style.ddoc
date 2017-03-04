@@ -59,10 +59,11 @@ DDOC_DECL_DD	= $(TC dd, declDesc, $0)
 DDOC_MEMBER_HEADER	= $0
 DDOC_HEADER_ANCHOR	= <a href="#$1" class="anchor">#</a>
 
-DDOC_PARAMS	= $(KEYVALUE Params, Parameters:, $0)
-DDOC_PARAM_ROW	= $(TR $0)
-DDOC_PARAM_ID	= $(TD $0)
-DDOC_PARAM_DESC	= $(TD $0)
+DDOC_PARAMS	= $(KEYVALUE Params, Parameters:, $(TABLEC table-bordered, $0))
+DDOC_PARAM_ROW	= $(TC tr, params, $0)
+DDOC_PARAM_ID	= $(TC td, param_id, $0)
+DDOC_PARAM_DESC	= $(TC td, param_desc, $0)
+
 _=
 
 DDOC_ANCHOR	= $(ADEF $1)
